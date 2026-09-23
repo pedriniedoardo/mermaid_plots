@@ -1,0 +1,72 @@
+%%{init: {
+  "theme": "redux-color",
+  "look": "neo",
+  "fontFamily": "DejaVu Sans Mono",
+  "layout": "elk"
+}}%%
+flowchart TB
+ subgraph A["<b>A. Santo's object</b> (R45, 00-03)"]
+        A0["<b>seurat_obj_0.1.rds</b><br/>Santo's SCT object"]
+        A1["<b>EDA + RNA re-norm</b><br/><code>00</code>"]
+        A2["<b>CellChat CT vs SOD</b><br/><code>01-03</code>"]
+  end
+ subgraph B["<b>B. Reanalysis</b> (R45, 04-11)"]
+        B0["<b>Raw counts: default vs CellBender</b><br/>QC, CyteTypeR<br/><code>04</code>"]
+        B1["<b>Macro groups, lognorm subclusters</b><br/>contamination panels<br/><code>05-07</code><br/>(help from Ganesh)"]
+        B2["<b>Santo EC barcode matching</b><br/><code>08, 08b</code>"]
+        B3["<b>Contaminant cleanup, LoupeR</b><br/>DEG CT vs SOD<br/><code>09-11</code><br/>(help from Ganesh)"]
+  end
+ subgraph C["<b>C. DEG reproducibility</b> (R45, 000, 12-16)"]
+        C0["<b>Reproduce Dario's EC DEGs</b><br/><code>000, 12-12d</code>"]
+        C1["<b>ENDO cluster tests</b><br/>Santo vs reanalysis<br/><code>12e-12i</code>"]
+        C2["<b>EC lymphatic fix</b><br/>SCT vs lognorm<br/><code>13-16</code>"]
+  end
+ subgraph E["<b>E. Santo subclustering</b> (R45_pixi, 17-22)"]
+        E0["<b>SCT subclustering</b><br/>EC_Santo untouched<br/><code>17</code>"]
+        E1["<b>Plots, markers, LoupeR</b><br/><code>18, 19</code>"]
+        E2["<b>Cleanup round 1</b><br/><code>20</code><br/>(help from Ganesh)"]
+        E3["<b>Apply to full object</b><br/>LoupeR reprocessed<br/><code>21, 22</code>"]
+  end
+    A0 --> A1
+    A1 --> A2
+    A2 --> D0{"<b>Decision:</b><br/>further clean<br/>Santo's draft analysis"}
+    B0 --> B1
+    B1 --> B2
+    B2 --> B3
+    D0 --> B0
+    C0 --> C1 & C2
+    A0 -.-> C0
+    B3 -.-> C0 & C1
+    C1 --> D1{"<b>Decision:</b><br/>restart from<br/>Santo's object"}
+    C2 --> D1
+    E0 --> E1
+    E1 --> E2
+    E2 --> E3
+    A0 -. source object .-> E0
+    D1 --> E0
+    E3 --> N["<b>Add EC_Santo annotation</b>,<br/>DEGs on cleaned object<br/>CellChat on cleaned object"]
+
+     A0:::step
+     A1:::step
+     A2:::step
+     B0:::step
+     B1:::step
+     B2:::step
+     B3:::step
+     C0:::step
+     C1:::step
+     C2:::step
+     E0:::step
+     E1:::step
+     E2:::step
+     E3:::step
+     D0:::decision
+     D1:::decision
+     N:::next
+    classDef step fill:#eef3fb,stroke:#4a6fa5
+    classDef decision fill:#fff4d6,stroke:#b8860b
+    classDef next fill:#e8f5e9,stroke:#2e7d32
+    style A fill:#FDF4FF,stroke:#E879F9
+    style B fill:#F0FDFA,stroke:#2DD4BF
+    style C fill:#FFF7ED,stroke:#FB923C
+    style E fill:#ECFEFF,stroke:#22D3EE

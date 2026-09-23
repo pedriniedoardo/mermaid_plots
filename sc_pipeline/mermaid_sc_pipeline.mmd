@@ -1,0 +1,37 @@
+%%{init: {
+  "theme": "redux-color",
+  "look": "neo",
+  "fontFamily": "DejaVu Sans Mono"
+}}%%
+flowchart TD
+    subgraph STEP1["<b>STEP 1 generate samplesheet</b>"]
+        A["<b>A) pypette</b>"] --> S1
+        Bn["<b>B) GEO/SRA download</b><br/><code>snakemake --sdm conda -p geo_samplesheet</code>"] --> S1
+        Cn["<b>C) hand-written</b>"] --> S1
+
+        S1["Generation of the<br/>samplesheet (samples.csv)"]
+    end
+
+    S1 --> S2["<b>Edit config.yaml</b><br/>(samplesheet, organism, cellbender, ...)"]
+
+    S2 --> S4["<b>STEP 2</b><br/><code>snakemake --sdm conda -p seurat_preprocessing</code>"]
+
+    S4 --> QC_Loop
+
+    subgraph QC_Loop ["<b>QC Threshold Tuning Loop (Optional)</b>"]
+        direction LR
+        S3["<b>Edit LUT_QC</b><br/>per-sample thresholds + doublet flag + sample to keep"]
+
+        S5["<b>STEP 3</b><br/><code>snakemake --sdm conda -p seurat_plotQCthr</code>"]
+
+        S3 --> S5
+        S5 --> S3
+    end
+
+    QC_Loop --> Metadata_Box
+
+    subgraph Metadata_Box ["<b>Edit Metadata (Optional)</b>"]
+        S6["<b>Edit meta_annotation.json</b><br/><b>Edit metadata.csv</b><br/>Edit CyteTypeR metadata file, edit sample metadata for the plotting"]
+    end
+
+    S6 --> S7["<b>STEP 5</b><br/><code>snakemake --sdm conda -p seurat_analysis</code>"]
